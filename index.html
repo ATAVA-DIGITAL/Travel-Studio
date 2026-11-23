@@ -2,116 +2,207 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ATAVA Travel Memory Maker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ATAVA Travel Memory Maker Pro</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f0f4f8; color: #1e293b; min-height: 100vh; display: flex; flex-direction: column; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #0f172a; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; }
         
         /* Header */
-        header { background: linear-gradient(135deg, #002244, #004488); color: white; padding: 25px 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
-        header h1 { font-size: 28px; letter-spacing: 1px; text-transform: uppercase; font-weight: 800; }
-        header p { font-size: 15px; opacity: 0.9; margin-top: 5px; }
+        header { 
+            background: linear-gradient(135deg, #111827, #1e293b); 
+            border-bottom: 2px solid #d4af37;
+            padding: 18px 15px; 
+            text-align: center; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .header-brand { display: flex; align-items: center; gap: 12px; justify-content: center; }
+        .header-logo-svg { width: 48px; height: 48px; flex-shrink: 0; }
+        header h1 { font-size: 22px; letter-spacing: 1px; text-transform: uppercase; font-weight: 800; color: #d4af37; }
+        header p { font-size: 13px; color: #cbd5e1; }
 
-        /* Main Layout */
-        .main-container { max-width: 1200px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 1.2fr; gap: 30px; flex-grow: 1; width: 100%; }
-        @media (max-width: 900px) { .main-container { grid-template-columns: 1fr; } }
+        /* Main Layout - Mobile First Responsive */
+        .main-container { 
+            max-width: 1250px; 
+            margin: 20px auto; 
+            padding: 0 15px; 
+            display: grid; 
+            grid-template-columns: 1fr 1.15fr; 
+            gap: 20px; 
+            flex-grow: 1; 
+            width: 100%; 
+        }
+        @media (max-width: 900px) { 
+            .main-container { grid-template-columns: 1fr; margin: 12px auto; gap: 15px; }
+            .preview-panel { order: -1; position: sticky; top: 0; z-index: 50; padding: 15px !important; }
+        }
 
         /* Panels */
-        .panel { background: white; border-radius: 16px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; }
-        .panel-title { font-size: 20px; font-weight: 800; color: #003366; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #e2e8f0; display: flex; align-items: center; gap: 10px; }
+        .panel { background: #1e293b; border-radius: 16px; padding: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.3); border: 1px solid #334155; }
+        .panel-title { font-size: 17px; font-weight: 800; color: #d4af37; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: space-between; }
 
         /* Form Inputs */
-        .form-group { margin-bottom: 18px; }
-        label { display: block; font-size: 14px; font-weight: 700; color: #334155; margin-bottom: 6px; }
-        input[type="text"], select, input[type="file"] { width: 100%; padding: 12px 15px; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 15px; outline: none; transition: 0.2s; background: #f8fafc; }
-        input[type="text"]:focus, select:focus { border-color: #004488; background: white; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        @media (max-width: 480px) { .grid-2 { grid-template-columns: 1fr; } }
+
+        .form-group { margin-bottom: 14px; }
+        label { display: block; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 5px; }
+        input[type="text"], select, input[type="file"], input[type="color"] { 
+            width: 100%; padding: 10px 12px; border: 1.5px solid #475569; border-radius: 10px; 
+            font-size: 14px; outline: none; transition: 0.2s; background: #0f172a; color: #ffffff; 
+        }
+        input[type="text"]:focus, select:focus { border-color: #d4af37; }
+        input[type="color"] { height: 42px; padding: 4px; cursor: pointer; }
 
         /* Upload Box */
-        .upload-box { border: 2px dashed #004488; background: #f0f7ff; border-radius: 12px; padding: 25px; text-align: center; cursor: pointer; transition: 0.2s; margin-bottom: 20px; }
-        .upload-box:hover { background: #e0f0ff; }
-        .upload-box p { font-weight: 700; color: #003366; font-size: 16px; }
-        .upload-box span { font-size: 13px; color: #64748b; display: block; margin-top: 5px; }
+        .upload-box { 
+            border: 2px dashed #d4af37; background: rgba(212, 175, 55, 0.08); 
+            border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; 
+            transition: 0.2s; margin-bottom: 16px; 
+        }
+        .upload-box:active, .upload-box:hover { background: rgba(212, 175, 55, 0.18); }
+        .upload-box p { font-weight: 800; color: #d4af37; font-size: 15px; }
+        .upload-box span { font-size: 12px; color: #94a3b8; display: block; margin-top: 4px; }
 
         /* Media List */
-        .media-list { max-height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 5px; }
-        .media-item { display: flex; align-items: center; gap: 12px; background: #f8fafc; padding: 10px; border-radius: 10px; border: 1px solid #cbd5e1; }
-        .media-thumb { width: 65px; height: 65px; object-fit: cover; border-radius: 8px; background: #000; flex-shrink: 0; }
-        .media-info { flex-grow: 1; }
-        .media-info input { padding: 8px 10px; font-size: 13px; margin-top: 4px; }
-        .media-badge { font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; background: #003366; color: white; }
+        .media-list { max-height: 450px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 4px; }
+        .media-item { 
+            display: flex; flex-direction: column; gap: 10px; background: #0f172a; 
+            padding: 12px; border-radius: 12px; border: 1px solid #334155; 
+        }
+        .media-top { display: flex; align-items: center; gap: 12px; }
+        .media-thumb { width: 65px; height: 65px; object-fit: cover; border-radius: 8px; background: #000; flex-shrink: 0; border: 1px solid #d4af37; }
+        .media-info { flex-grow: 1; min-width: 0; }
+        .media-badge { font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; background: #d4af37; color: #0f172a; display: inline-block; margin-bottom: 4px; }
+        .media-info input { padding: 7px 10px; font-size: 13px; }
+        
+        .media-controls-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #1e293b; padding: 8px; border-radius: 8px; }
+        .media-controls-row label { font-size: 11px; margin-bottom: 2px; color: #94a3b8; }
+        .media-controls-row select { padding: 6px 8px; font-size: 12px; }
+
         .media-actions { display: flex; flex-direction: column; gap: 4px; }
-        .btn-small { background: #e2e8f0; border: none; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; }
-        .btn-small:hover { background: #cbd5e1; }
-        .btn-del { background: #fee2e2; color: #dc2626; }
-        .btn-del:hover { background: #fecaca; }
+        .btn-small { background: #334155; color: white; border: none; padding: 6px 9px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; }
+        .btn-small:disabled { opacity: 0.3; }
+        .btn-del { background: #7f1d1d; color: #fecaca; }
 
         /* Preview & Canvas Area */
         .preview-wrapper { display: flex; flex-direction: column; align-items: center; }
-        canvas { width: 100%; max-width: 640px; aspect-ratio: 16/9; background: #0f172a; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
+        canvas { width: 100%; max-width: 640px; aspect-ratio: 16/9; background: #000; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid #334155; }
         
-        .controls { display: flex; flex-wrap: wrap; gap: 12px; width: 100%; margin-top: 20px; justify-content: center; }
-        .btn { padding: 14px 24px; border: none; border-radius: 10px; font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-play { background: #004488; color: white; }
-        .btn-play:hover { background: #003366; }
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-top: 15px; }
+        .btn { padding: 13px 16px; border: none; border-radius: 10px; font-size: 14px; font-weight: 800; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn-play { background: #d4af37; color: #0f172a; }
+        .btn-play:hover { background: #eab308; }
         .btn-export { background: #16a34a; color: white; }
         .btn-export:hover { background: #15803d; }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .status-bar { margin-top: 15px; font-size: 15px; font-weight: 700; color: #004488; text-align: center; min-height: 24px; }
+        .status-bar { margin-top: 12px; font-size: 13px; font-weight: 600; color: #38bdf8; text-align: center; min-height: 20px; }
 
-        footer { background: #002244; color: white; text-align: center; padding: 20px; font-size: 14px; margin-top: 40px; }
+        footer { background: #090d16; color: #94a3b8; text-align: center; padding: 18px; font-size: 13px; margin-top: 30px; border-top: 1px solid #1e293b; }
+        footer span { color: #d4af37; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>ATAVA Travel Memory Maker</h1>
-        <p>Turn your trip photos & video clips into a cinematic memory movie</p>
+        <div class="header-brand">
+            <!-- ATAVA Vector Logo -->
+            <svg class="header-logo-svg" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="44" fill="#18181b" stroke="#d4af37" stroke-width="6"/>
+                <path d="M30 72 L50 24 L70 72" fill="none" stroke="#d4af37" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M34 64 L48 48 L56 56 L72 38" fill="none" stroke="#facc15" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+                <polygon points="75,35 63,37 71,46" fill="#facc15"/>
+            </svg>
+            <div>
+                <h1>ATAVA Travel Memory Maker</h1>
+                <p>Mobile & Desktop Cinematic Video Creator</p>
+            </div>
+        </div>
     </header>
 
     <div class="main-container">
         <!-- Left Panel: Controls & Media -->
         <div class="panel">
-            <div class="panel-title">1. Trip Details & Media</div>
+            <div class="panel-title">
+                <span>1. Settings & Media Upload</span>
+            </div>
             
-            <div class="form-group">
-                <label>Trip Title (Appears at the start)</label>
-                <input type="text" id="tripTitle" value="OUR MEMORABLE TRIP 2026" placeholder="e.g., MUNNAR FAMILY TRIP">
-            </div>
-
-            <div class="form-group">
-                <label>Subtitle / Location</label>
-                <input type="text" id="tripSubtitle" value="Beautiful Moments Captured Together" placeholder="e.g., Kerala, India">
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="grid-2">
                 <div class="form-group">
-                    <label>Animation Style</label>
-                    <select id="animStyle">
-                        <option value="zoom">Smooth Zoom (Ken Burns)</option>
-                        <option value="slide">Slide Transition</option>
-                        <option value="fade">Classic Fade</option>
+                    <label>Trip Title (Intro)</label>
+                    <input type="text" id="tripTitle" value="OUR MEMORABLE TRIP 2026" placeholder="Trip Name">
+                </div>
+                <div class="form-group">
+                    <label>Subtitle / Location</label>
+                    <input type="text" id="tripSubtitle" value="Captured with ATAVA" placeholder="Location">
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Frame / Border Style</label>
+                    <select id="borderStyle">
+                        <option value="gold">✨ ATAVA Royal Gold Frame</option>
+                        <option value="polaroid">🖼️ Classic White Polaroid</option>
+                        <option value="neon">💠 Neon Cyan Glow</option>
+                        <option value="cinema">🎞️ Cinema Film Strip</option>
+                        <option value="none">No Border (Full)</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Photo Duration</label>
+                    <label>Background Theme</label>
+                    <select id="bgTheme" onchange="toggleCustomColor()">
+                        <option value="blur">🌫️ Blurred Photo/Video</option>
+                        <option value="atava_dark">🖤 ATAVA Gold & Black</option>
+                        <option value="royal_blue">🌌 Deep Royal Blue</option>
+                        <option value="sunset">🌅 Warm Sunset Gradient</option>
+                        <option value="custom">🎨 Custom Solid Color</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group" id="customColorBox" style="display:none;">
+                <label>Pick Custom Background Color</label>
+                <input type="color" id="customBgColor" value="#1e1b4b">
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Default Photo Duration</label>
                     <select id="photoDuration">
                         <option value="3">3 Seconds</option>
                         <option value="4" selected>4 Seconds</option>
                         <option value="5">5 Seconds</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label>Logo Watermark</label>
+                    <select id="logoOption" onchange="handleLogoMode()">
+                        <option value="atava">Use ATAVA Official Logo</option>
+                        <option value="custom">Upload Custom Logo</option>
+                        <option value="none">Hide Logo</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group" id="customLogoBox" style="display:none;">
+                <label>Select Custom Logo Image</label>
+                <input type="file" id="customLogoInput" accept="image/*">
             </div>
 
             <div class="form-group">
-                <label>Background Music (Optional MP3/Audio)</label>
+                <label>Background Music (MP3 / Audio)</label>
                 <input type="file" id="audioInput" accept="audio/*">
             </div>
 
             <div class="upload-box" onclick="document.getElementById('mediaInput').click()">
-                <p>+ Click to Add Photos & Videos</p>
-                <span>Select multiple images (JPG, PNG) or video clips (MP4)</span>
+                <p>+ Tap to Add Photos & Videos</p>
+                <span>Select multiple images or video clips from your phone/PC</span>
                 <input type="file" id="mediaInput" multiple accept="image/*,video/*" style="display: none;">
             </div>
 
@@ -121,14 +212,14 @@
         </div>
 
         <!-- Right Panel: Video Preview & Export -->
-        <div class="panel">
-            <div class="panel-title">2. Movie Preview & Download</div>
+        <div class="panel preview-panel">
+            <div class="panel-title">2. Live Preview & Download</div>
             <div class="preview-wrapper">
                 <canvas id="movieCanvas" width="1280" height="720"></canvas>
                 
                 <div class="controls">
-                    <button class="btn btn-play" id="previewBtn" onclick="startPlayback(false)">▶ Preview Movie</button>
-                    <button class="btn btn-export" id="exportBtn" onclick="startPlayback(true)">⬇ Create & Download Video</button>
+                    <button class="btn btn-play" id="previewBtn" onclick="startPlayback(false)">▶ Preview</button>
+                    <button class="btn btn-export" id="exportBtn" onclick="startPlayback(true)">⬇ Save Video</button>
                 </div>
                 <div class="status-bar" id="statusBar">Add photos or videos to begin!</div>
             </div>
@@ -136,7 +227,7 @@
     </div>
 
     <footer>
-        Powered by ATAVA Digital Services & Trading
+        Powered by <span>ATAVA DIGITAL SERVICES & TRADING</span>
     </footer>
 
     <script>
@@ -144,25 +235,115 @@
         const ctx = canvas.getContext('2d');
         const mediaInput = document.getElementById('mediaInput');
         const audioInput = document.getElementById('audioInput');
+        const customLogoInput = document.getElementById('customLogoInput');
         const mediaListEl = document.getElementById('mediaList');
         const statusBar = document.getElementById('statusBar');
 
-        let mediaItems = []; // { id, type: 'image'|'video', url, element, caption, duration }
+        let mediaItems = []; // { id, type, url, element, caption, duration, anim, speed }
         let bgAudioUrl = null;
+        let customLogoImg = null;
         let isPlaying = false;
-        let animationFrameId = null;
 
-        // Draw Initial Welcome Screen on Canvas
+        // UI Toggles
+        function toggleCustomColor() {
+            const val = document.getElementById('bgTheme').value;
+            document.getElementById('customColorBox').style.display = (val === 'custom') ? 'block' : 'none';
+        }
+
+        function handleLogoMode() {
+            const val = document.getElementById('logoOption').value;
+            document.getElementById('customLogoBox').style.display = (val === 'custom') ? 'block' : 'none';
+        }
+
+        customLogoInput.addEventListener('change', (e) => {
+            if (e.target.files[0]) {
+                const img = new Image();
+                img.src = URL.createObjectURL(e.target.files[0]);
+                img.onload = () => { customLogoImg = img; };
+            }
+        });
+
+        // Draw Official ATAVA Logo on Canvas (Vector Drawing)
+        function drawAtavaLogo(x, y, radius, includeText = false) {
+            ctx.save();
+            // Dark circular badge
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = '#141414';
+            ctx.fill();
+            ctx.lineWidth = radius * 0.13;
+            ctx.strokeStyle = '#d4af37';
+            ctx.stroke();
+
+            // 'A' Shape
+            ctx.beginPath();
+            ctx.moveTo(x - radius * 0.42, y + radius * 0.42);
+            ctx.lineTo(x, y - radius * 0.52);
+            ctx.lineTo(x + radius * 0.42, y + radius * 0.42);
+            ctx.lineWidth = radius * 0.14;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = '#d4af37';
+            ctx.stroke();
+
+            // Zig-zag Growth Arrow
+            ctx.beginPath();
+            ctx.moveTo(x - radius * 0.32, y + radius * 0.28);
+            ctx.lineTo(x - radius * 0.04, y - radius * 0.02);
+            ctx.lineTo(x + radius * 0.12, y + radius * 0.14);
+            ctx.lineTo(x + radius * 0.42, y - radius * 0.22);
+            ctx.lineWidth = radius * 0.11;
+            ctx.strokeStyle = '#facc15';
+            ctx.stroke();
+
+            // Arrowhead
+            ctx.beginPath();
+            ctx.moveTo(x + radius * 0.48, y - radius * 0.28);
+            ctx.lineTo(x + radius * 0.24, y - radius * 0.24);
+            ctx.lineTo(x + radius * 0.40, y - radius * 0.06);
+            ctx.closePath();
+            ctx.fillStyle = '#facc15';
+            ctx.fill();
+
+            if (includeText) {
+                ctx.fillStyle = '#d4af37';
+                ctx.font = `bold ${Math.round(radius * 0.55)}px Georgia, serif`;
+                ctx.textAlign = 'center';
+                ctx.fillText('A T A V A', x, y + radius * 1.65);
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = `600 ${Math.round(radius * 0.22)}px Segoe UI, sans-serif`;
+                ctx.fillText('DIGITAL SERVICES & TRADING', x, y + radius * 2.05);
+            }
+            ctx.restore();
+        }
+
+        // Draw Watermark Corner Logo during playback
+        function drawWatermark() {
+            const mode = document.getElementById('logoOption').value;
+            if (mode === 'none') return;
+
+            ctx.save();
+            ctx.globalAlpha = 0.88;
+            if (mode === 'custom' && customLogoImg) {
+                const h = 75;
+                const w = (customLogoImg.width / customLogoImg.height) * h;
+                ctx.drawImage(customLogoImg, canvas.width - w - 30, 25, w, h);
+            } else {
+                drawAtavaLogo(canvas.width - 65, 65, 38, false);
+            }
+            ctx.restore();
+        }
+
+        // Initial Idle Screen
         function drawIdleScreen() {
             ctx.fillStyle = '#0f172a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 42px Segoe UI';
-            ctx.textAlign = 'center';
-            ctx.fillText('ATAVA TRAVEL MEMORY STUDIO', canvas.width / 2, canvas.height / 2 - 15);
+            drawAtavaLogo(canvas.width / 2, canvas.height / 2 - 70, 65, true);
             ctx.fillStyle = '#94a3b8';
-            ctx.font = '24px Segoe UI';
-            ctx.fillText('Upload your trip photos & videos on the left', canvas.width / 2, canvas.height / 2 + 30);
+            ctx.font = '22px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Upload photos & videos to create your memory movie', canvas.width / 2, canvas.height / 2 + 120);
         }
         drawIdleScreen();
 
@@ -170,7 +351,7 @@
         audioInput.addEventListener('change', (e) => {
             if (e.target.files[0]) {
                 bgAudioUrl = URL.createObjectURL(e.target.files[0]);
-                statusBar.innerText = "Background music added: " + e.target.files[0].name;
+                statusBar.innerText = "🎵 Music added: " + e.target.files[0].name;
             }
         });
 
@@ -179,51 +360,55 @@
             const files = Array.from(e.target.files);
             if (!files.length) return;
 
-            statusBar.innerText = "Loading media files...";
+            statusBar.innerText = "⏳ Loading media files...";
+            const defaultAnimations = ['zoom', 'spin_flip', 'tumble', 'spiral', 'slide'];
 
-            for (const file of files) {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
                 const url = URL.createObjectURL(file);
                 const isVideo = file.type.startsWith('video/');
+                const autoAnim = defaultAnimations[(mediaItems.length) % defaultAnimations.length];
                 
                 if (isVideo) {
                     const vid = document.createElement('video');
                     vid.src = url;
                     vid.muted = true;
                     vid.playsInline = true;
-                    await new Promise(resolve => {
-                        vid.onloadedmetadata = () => resolve();
-                    });
+                    vid.setAttribute('playsinline', '');
+                    await new Promise(resolve => { vid.onloadedmetadata = () => resolve(); });
                     mediaItems.push({
                         id: Date.now() + Math.random(),
                         type: 'video',
                         url: url,
                         element: vid,
                         caption: '',
-                        duration: Math.min(vid.duration, 15) // Cap clip preview at 15s for smooth rendering
+                        baseDuration: Math.min(vid.duration, 15),
+                        anim: 'zoom',
+                        speed: 1 // 1 = Normal, 0.5 = Slow Mo, 0.25 = Super Slow Mo
                     });
                 } else {
                     const img = new Image();
                     img.src = url;
-                    await new Promise(resolve => {
-                        img.onload = () => resolve();
-                    });
+                    await new Promise(resolve => { img.onload = () => resolve(); });
                     mediaItems.push({
                         id: Date.now() + Math.random(),
                         type: 'image',
                         url: url,
                         element: img,
                         caption: '',
-                        duration: parseInt(document.getElementById('photoDuration').value)
+                        baseDuration: parseInt(document.getElementById('photoDuration').value),
+                        anim: autoAnim,
+                        speed: 1
                     });
                 }
             }
 
             renderMediaList();
-            statusBar.innerText = `${mediaItems.length} items ready! Click Preview or Download.`;
+            statusBar.innerText = `✅ ${mediaItems.length} items ready! Customize animations below.`;
             mediaInput.value = '';
         });
 
-        // Render Media List UI
+        // Render Individual Media Cards with Custom Animation & Slow-Mo Controls
         function renderMediaList() {
             mediaListEl.innerHTML = '';
             mediaItems.forEach((item, index) => {
@@ -232,34 +417,69 @@
                 
                 const thumb = item.type === 'image' 
                     ? `<img src="${item.url}" class="media-thumb">`
-                    : `<video src="${item.url}" class="media-thumb"></video>`;
+                    : `<video src="${item.url}" class="media-thumb" muted></video>`;
+
+                const speedControl = item.type === 'video' ? `
+                    <div>
+                        <label>Playback Speed</label>
+                        <select onchange="updateItemProp(${index}, 'speed', parseFloat(this.value))">
+                            <option value="1" ${item.speed === 1 ? 'selected' : ''}>Normal (1x)</option>
+                            <option value="0.5" ${item.speed === 0.5 ? 'selected' : ''}>🐢 Slow Motion (0.5x)</option>
+                            <option value="0.25" ${item.speed === 0.25 ? 'selected' : ''}>🐌 Super Slow-Mo (0.25x)</option>
+                        </select>
+                    </div>
+                ` : `
+                    <div>
+                        <label>Photo Duration</label>
+                        <select onchange="updateItemProp(${index}, 'baseDuration', parseInt(this.value))">
+                            <option value="3" ${item.baseDuration === 3 ? 'selected' : ''}>3 Sec</option>
+                            <option value="4" ${item.baseDuration === 4 ? 'selected' : ''}>4 Sec</option>
+                            <option value="5" ${item.baseDuration === 5 ? 'selected' : ''}>5 Sec</option>
+                            <option value="6" ${item.baseDuration === 6 ? 'selected' : ''}>6 Sec</option>
+                        </select>
+                    </div>
+                `;
 
                 div.innerHTML = `
-                    ${thumb}
-                    <div class="media-info">
-                        <span class="media-badge">${index + 1}. ${item.type}</span>
-                        <input type="text" placeholder="Add memory caption (optional)..." value="${item.caption}" onchange="updateCaption(${index}, this.value)">
+                    <div class="media-top">
+                        ${thumb}
+                        <div class="media-info">
+                            <span class="media-badge">#${index + 1} ${item.type}</span>
+                            <input type="text" placeholder="Add memory caption..." value="${item.caption}" onchange="updateItemProp(${index}, 'caption', this.value)">
+                        </div>
+                        <div class="media-actions">
+                            <button class="btn-small" onclick="moveItem(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
+                            <button class="btn-small" onclick="moveItem(${index}, 1)" ${index === mediaItems.length - 1 ? 'disabled' : ''}>▼</button>
+                            <button class="btn-small btn-del" onclick="removeItem(${index})">✕</button>
+                        </div>
                     </div>
-                    <div class="media-actions">
-                        <button class="btn-small" onclick="moveItem(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
-                        <button class="btn-small" onclick="moveItem(${index}, 1)" ${index === mediaItems.length - 1 ? 'disabled' : ''}>▼</button>
-                        <button class="btn-small btn-del" onclick="removeItem(${index})">✕</button>
+                    <div class="media-controls-row">
+                        <div>
+                            <label>Animation Effect</label>
+                            <select onchange="updateItemProp(${index}, 'anim', this.value)">
+                                <option value="zoom" ${item.anim === 'zoom' ? 'selected' : ''}>🔍 Smooth Zoom</option>
+                                <option value="spin_flip" ${item.anim === 'spin_flip' ? 'selected' : ''}>🔄 3D Spin & Flip (തിരിഞ്ഞു വരുന്നത്)</option>
+                                <option value="tumble" ${item.anim === 'tumble' ? 'selected' : ''}>💫 Tumble & Roll (മറിഞ്ഞു വീഴുന്നത്)</option>
+                                <option value="spiral" ${item.anim === 'spiral' ? 'selected' : ''}>🌀 Spiral Swirl (കറങ്ങി വരുന്നത്)</option>
+                                <option value="slide" ${item.anim === 'slide' ? 'selected' : ''}>➡️ Slide Transition</option>
+                                <option value="bounce" ${item.anim === 'bounce' ? 'selected' : ''}>🏀 Bounce Pop</option>
+                            </select>
+                        </div>
+                        ${speedControl}
                     </div>
                 `;
                 mediaListEl.appendChild(div);
             });
         }
 
-        function updateCaption(index, text) {
-            mediaItems[index].caption = text;
+        function updateItemProp(index, prop, value) {
+            mediaItems[index][prop] = value;
         }
 
         function moveItem(index, dir) {
             const newIndex = index + dir;
             if (newIndex < 0 || newIndex >= mediaItems.length) return;
-            const temp = mediaItems[index];
-            mediaItems[index] = mediaItems[newIndex];
-            mediaItems[newIndex] = temp;
+            [mediaItems[index], mediaItems[newIndex]] = [mediaItems[newIndex], mediaItems[index]];
             renderMediaList();
         }
 
@@ -269,83 +489,222 @@
             if (mediaItems.length === 0) drawIdleScreen();
         }
 
-        // Draw Image/Video Cover-Fit with Animation
-        function drawMediaFrame(item, progress, animStyle) {
-            ctx.fillStyle = '#000000';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Draw Background based on Theme
+        function drawBackground(el, elWidth, elHeight) {
+            const theme = document.getElementById('bgTheme').value;
+            if (theme === 'blur' && elWidth && elHeight) {
+                ctx.save();
+                ctx.filter = 'blur(28px) brightness(0.45)';
+                const bgScale = Math.max(canvas.width / elWidth, canvas.height / elHeight);
+                const bgW = elWidth * bgScale;
+                const bgH = elHeight * bgScale;
+                ctx.drawImage(el, (canvas.width - bgW) / 2, (canvas.height - bgH) / 2, bgW, bgH);
+                ctx.restore();
+            } else if (theme === 'atava_dark') {
+                const grad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 50, canvas.width/2, canvas.height/2, 750);
+                grad.addColorStop(0, '#29210a');
+                grad.addColorStop(1, '#09090b');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            } else if (theme === 'royal_blue') {
+                const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                grad.addColorStop(0, '#020617');
+                grad.addColorStop(1, '#1e3a8a');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            } else if (theme === 'sunset') {
+                const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                grad.addColorStop(0, '#4c0519');
+                grad.addColorStop(0.5, '#9a3412');
+                grad.addColorStop(1, '#1e1b4b');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            } else if (theme === 'custom') {
+                ctx.fillStyle = document.getElementById('customBgColor').value;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        }
 
+        // Draw Stylish Border around the Media
+        function drawMediaBorder(w, h) {
+            const style = document.getElementById('borderStyle').value;
+            if (style === 'none') return;
+
+            ctx.save();
+            if (style === 'gold') {
+                ctx.strokeStyle = '#d4af37';
+                ctx.lineWidth = 10;
+                ctx.strokeRect(-w/2, -h/2, w, h);
+                ctx.strokeStyle = '#fef08a';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(-w/2 + 12, -h/2 + 12, w - 24, h - 24);
+            } else if (style === 'polaroid') {
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 18;
+                ctx.strokeRect(-w/2, -h/2, w, h);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(-w/2 - 9, h/2 - 5, w + 18, 45);
+            } else if (style === 'neon') {
+                ctx.shadowColor = '#06b6d4';
+                ctx.shadowBlur = 25;
+                ctx.strokeStyle = '#22d3ee';
+                ctx.lineWidth = 8;
+                ctx.strokeRect(-w/2, -h/2, w, h);
+            } else if (style === 'cinema') {
+                ctx.strokeStyle = '#18181b';
+                ctx.lineWidth = 22;
+                ctx.strokeRect(-w/2, -h/2, w, h);
+                ctx.fillStyle = '#ffffff';
+                for (let x = -w/2 + 15; x < w/2 - 15; x += 35) {
+                    ctx.fillRect(x, -h/2 - 7, 16, 10);
+                    ctx.fillRect(x, h/2 - 3, 16, 10);
+                }
+            }
+            ctx.restore();
+        }
+
+        // Draw Frame with Custom Animations (Spin, Tumble, Spiral, Zoom, etc.)
+        function drawMediaFrame(item, progress) {
             const el = item.element;
             const elWidth = item.type === 'image' ? el.width : el.videoWidth;
             const elHeight = item.type === 'image' ? el.height : el.videoHeight;
-
             if (!elWidth || !elHeight) return;
 
-            // Calculate aspect fit (contain with blurred background)
-            ctx.save();
-            ctx.filter = 'blur(25px) brightness(0.4)';
-            const bgScale = Math.max(canvas.width / elWidth, canvas.height / elHeight);
-            const bgW = elWidth * bgScale;
-            const bgH = elHeight * bgScale;
-            ctx.drawImage(el, (canvas.width - bgW) / 2, (canvas.height - bgH) / 2, bgW, bgH);
-            ctx.restore();
+            drawBackground(el, elWidth, elHeight);
 
-            // Foreground Sharp Media with Animation
             ctx.save();
-            let scale = Math.min(canvas.width / elWidth, canvas.height / elHeight);
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+
+            // Leave slight margin so borders & rotations look great
+            let baseScale = Math.min((canvas.width * 0.86) / elWidth, (canvas.height * 0.84) / elHeight);
+            let scaleX = baseScale;
+            let scaleY = baseScale;
+            let rotation = 0;
             let offsetX = 0;
+            let offsetY = 0;
             let alpha = 1;
 
-            if (item.type === 'image') {
-                if (animStyle === 'zoom') {
-                    scale *= (1 + progress * 0.12); // Smooth 12% zoom in
-                } else if (animStyle === 'slide') {
-                    if (progress < 0.15) offsetX = (1 - progress / 0.15) * 150;
-                } else if (animStyle === 'fade') {
-                    if (progress < 0.2) alpha = progress / 0.2;
-                    if (progress > 0.85) alpha = (1 - progress) / 0.15;
-                }
+            const anim = item.anim;
+            const entryT = Math.min(progress / 0.28, 1); // First 28% of clip is entry animation
+            const easeOut = 1 - Math.pow(1 - entryT, 3);
+
+            if (anim === 'zoom') {
+                const z = 1 + progress * 0.14;
+                scaleX *= z;
+                scaleY *= z;
+            } else if (anim === 'spin_flip') {
+                // 3D Horizontal Flip + Spin (തിരിഞ്ഞു മറിഞ്ഞു വരുന്നത്)
+                rotation = (1 - easeOut) * Math.PI * 2;
+                scaleX *= easeOut * Math.cos((1 - easeOut) * Math.PI);
+                scaleY *= easeOut;
+            } else if (anim === 'tumble') {
+                // Tumble & Roll from corner (മറിഞ്ഞു വീഴുന്നത്)
+                rotation = (1 - easeOut) * Math.PI * 1.5;
+                offsetX = (1 - easeOut) * -450;
+                offsetY = (1 - easeOut) * -200;
+                scaleX *= (0.3 + 0.7 * easeOut);
+                scaleY *= (0.3 + 0.7 * easeOut);
+            } else if (anim === 'spiral') {
+                // Spiral Swirl Zoom (കറങ്ങി അടുത്തേക്ക് വരുന്നത്)
+                rotation = (1 - easeOut) * Math.PI * 4;
+                scaleX *= easeOut * (1 + progress * 0.08);
+                scaleY *= easeOut * (1 + progress * 0.08);
+                alpha = easeOut;
+            } else if (anim === 'slide') {
+                offsetX = (1 - easeOut) * 600;
+            } else if (anim === 'bounce') {
+                const bounce = entryT < 1 ? Math.abs(Math.sin(entryT * Math.PI * 2.5)) * (1 - entryT) * 120 : 0;
+                offsetY = -bounce;
             }
 
+            ctx.translate(offsetX, offsetY);
+            ctx.rotate(rotation);
+            ctx.scale(scaleX, scaleY);
             ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
-            const drawW = elWidth * scale;
-            const drawH = elHeight * scale;
-            ctx.drawImage(el, (canvas.width - drawW) / 2 + offsetX, (canvas.height - drawH) / 2, drawW, drawH);
+
+            // Draw Media centered at (0,0)
+            ctx.drawImage(el, -elWidth / 2, -elHeight / 2, elWidth, elHeight);
+
+            // Draw Border around Media
+            ctx.save();
+            ctx.scale(1 / scaleX, 1 / scaleY); // Keep border thickness consistent
+            drawMediaBorder(elWidth * Math.abs(scaleX), elHeight * Math.abs(scaleY));
             ctx.restore();
+
+            ctx.restore();
+
+            // Draw Watermark Logo
+            drawWatermark();
+
+            // Draw Slow Motion Badge if active
+            if (item.type === 'video' && item.speed < 1) {
+                ctx.save();
+                ctx.fillStyle = 'rgba(212, 175, 55, 0.9)';
+                ctx.roundRect ? ctx.roundRect(25, 25, 165, 34, 8) : ctx.fillRect(25, 25, 165, 34);
+                ctx.fill();
+                ctx.fillStyle = '#0f172a';
+                ctx.font = 'bold 15px Segoe UI';
+                ctx.textAlign = 'left';
+                ctx.fillText(`🐢 SLOW-MO ${item.speed}x`, 38, 47);
+                ctx.restore();
+            }
 
             // Draw Caption Overlay if available
             if (item.caption.trim() !== '') {
                 ctx.save();
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
-                ctx.fillRect(0, canvas.height - 90, canvas.width, 90);
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.82)';
+                ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
+                ctx.fillStyle = '#d4af37';
+                ctx.fillRect(0, canvas.height - 80, canvas.width, 3);
                 ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 30px Segoe UI';
+                ctx.font = 'bold 28px Segoe UI';
                 ctx.textAlign = 'center';
-                ctx.fillText(item.caption.toUpperCase(), canvas.width / 2, canvas.height - 35);
+                ctx.fillText(item.caption.toUpperCase(), canvas.width / 2, canvas.height - 30);
                 ctx.restore();
             }
         }
 
-        // Draw Intro Title Card
+        // Draw Intro Title Card with ATAVA Branding
         function drawTitleCard(progress) {
             const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-            grad.addColorStop(0, '#001a33');
-            grad.addColorStop(1, '#004080');
+            grad.addColorStop(0, '#09090b');
+            grad.addColorStop(1, '#1e293b');
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Gold Outer Frame
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 6;
+            ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
 
             const alpha = progress < 0.25 ? progress / 0.25 : (progress > 0.8 ? (1 - progress) / 0.2 : 1);
             ctx.save();
             ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 54px Segoe UI';
+
+            // Draw Logo at top of intro
+            const logoMode = document.getElementById('logoOption').value;
+            if (logoMode === 'custom' && customLogoImg) {
+                const h = 110;
+                const w = (customLogoImg.width / customLogoImg.height) * h;
+                ctx.drawImage(customLogoImg, (canvas.width - w)/2, 110, w, h);
+            } else if (logoMode === 'atava') {
+                drawAtavaLogo(canvas.width / 2, 175, 58, false);
+            }
+
+            ctx.fillStyle = '#d4af37';
+            ctx.font = 'bold 52px Segoe UI';
             ctx.textAlign = 'center';
             const title = document.getElementById('tripTitle').value.toUpperCase() || 'OUR TRIP MEMORIES';
-            ctx.fillText(title, canvas.width / 2, canvas.height / 2 - 15);
+            ctx.fillText(title, canvas.width / 2, canvas.height / 2 + 40);
 
-            ctx.fillStyle = '#38bdf8';
-            ctx.font = '28px Segoe UI';
+            ctx.fillStyle = '#f8fafc';
+            ctx.font = '26px Segoe UI';
             const sub = document.getElementById('tripSubtitle').value || '';
-            ctx.fillText(sub, canvas.width / 2, canvas.height / 2 + 40);
+            ctx.fillText(sub, canvas.width / 2, canvas.height / 2 + 95);
+
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = 'bold 16px Segoe UI';
+            ctx.fillText('PRESENTED BY ATAVA DIGITAL SERVICES & TRADING', canvas.width / 2, canvas.height - 65);
             ctx.restore();
         }
 
@@ -363,11 +722,6 @@
             previewBtn.disabled = true;
             exportBtn.disabled = true;
 
-            const photoDur = parseInt(document.getElementById('photoDuration').value);
-            const animStyle = document.getElementById('animStyle').value;
-            mediaItems.forEach(item => { if (item.type === 'image') item.duration = photoDur; });
-
-            // Setup Audio & Recorder if Exporting
             let audioEl = null;
             let mediaRecorder = null;
             let recordedChunks = [];
@@ -378,10 +732,17 @@
             }
 
             if (isRecording) {
-                statusBar.innerText = "🎬 Recording your Travel Movie... Please wait until it finishes.";
-                const canvasStream = canvas.captureStream(30); // 30 FPS
+                statusBar.innerText = "🎬 Creating Video... Keep screen open until complete.";
+                const canvasStream = canvas.captureStream(30);
                 
-                // Combine Audio if present
+                // Mobile & Desktop compatible MIME type check
+                let mimeType = 'video/webm';
+                if (MediaRecorder.isTypeSupported('video/mp4')) {
+                    mimeType = 'video/mp4';
+                } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+                    mimeType = 'video/webm;codecs=vp9';
+                }
+
                 if (audioEl) {
                     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                     const source = audioCtx.createMediaElementSource(audioEl);
@@ -389,9 +750,9 @@
                     source.connect(dest);
                     source.connect(audioCtx.destination);
                     const combinedStream = new MediaStream([...canvasStream.getVideoTracks(), ...dest.stream.getAudioTracks()]);
-                    mediaRecorder = new MediaRecorder(combinedStream, { mimeType: 'video/webm' });
+                    mediaRecorder = new MediaRecorder(combinedStream, { mimeType });
                 } else {
-                    mediaRecorder = new MediaRecorder(canvasStream, { mimeType: 'video/webm' });
+                    mediaRecorder = new MediaRecorder(canvasStream, { mimeType });
                 }
 
                 mediaRecorder.ondataavailable = (e) => {
@@ -399,39 +760,51 @@
                 };
 
                 mediaRecorder.onstop = () => {
-                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
+                    const blob = new Blob(recordedChunks, { type: mimeType });
                     const downloadUrl = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = downloadUrl;
-                    a.download = (document.getElementById('tripTitle').value || 'Travel-Memory').replace(/\s+/g, '_') + '.webm';
+                    a.download = (document.getElementById('tripTitle').value || 'ATAVA-Memory').replace(/\s+/g, '_') + '.' + ext;
+                    document.body.appendChild(a);
                     a.click();
-                    statusBar.innerText = "✅ Movie Downloaded Successfully!";
+                    document.body.removeChild(a);
+                    statusBar.innerText = "✅ Video Saved to your device!";
                 };
 
                 mediaRecorder.start();
             } else {
-                statusBar.innerText = "▶ Playing Movie Preview...";
+                statusBar.innerText = "▶ Playing Preview...";
             }
 
-            if (audioEl) audioEl.play();
+            if (audioEl) {
+                try { await audioEl.play(); } catch(e) { console.log(e); }
+            }
 
-            // 1. Play Intro Title (3 seconds)
+            // 1. Intro Title (3 seconds)
             await runTimelineSegment(3, (progress) => drawTitleCard(progress));
 
-            // 2. Play Each Media Item Sequentially
+            // 2. Play Each Item with Individual Animation & Speed
             for (let i = 0; i < mediaItems.length; i++) {
                 const item = mediaItems[i];
+                let effectiveDuration = item.baseDuration;
+
                 if (item.type === 'video') {
                     item.element.currentTime = 0;
-                    item.element.play();
+                    item.element.playbackRate = item.speed; // Apply Slow Motion
+                    effectiveDuration = item.baseDuration / item.speed; // Extend duration for slow motion
+                    await item.element.play();
                 }
-                await runTimelineSegment(item.duration, (progress) => drawMediaFrame(item, progress, animStyle));
+
+                await runTimelineSegment(effectiveDuration, (progress) => drawMediaFrame(item, progress));
+
                 if (item.type === 'video') {
                     item.element.pause();
+                    item.element.playbackRate = 1.0;
                 }
             }
 
-            // Finish
+            // Cleanup
             if (audioEl) {
                 audioEl.pause();
                 audioEl.currentTime = 0;
@@ -439,7 +812,7 @@
             if (mediaRecorder && mediaRecorder.state !== 'inactive') {
                 mediaRecorder.stop();
             } else {
-                statusBar.innerText = "Preview finished! Click 'Create & Download Video' to save.";
+                statusBar.innerText = "Preview finished! Tap 'Save Video' to download.";
             }
 
             isPlaying = false;
