@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATAVA Travel Memory Maker</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f0f4f8; color: #1e293b; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        /* Header */
+        header { background: linear-gradient(135deg, #002244, #004488); color: white; padding: 25px 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+        header h1 { font-size: 28px; letter-spacing: 1px; text-transform: uppercase; font-weight: 800; }
+        header p { font-size: 15px; opacity: 0.9; margin-top: 5px; }
+
+        /* Main Layout */
+        .main-container { max-width: 1200px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 1.2fr; gap: 30px; flex-grow: 1; width: 100%; }
+        @media (max-width: 900px) { .main-container { grid-template-columns: 1fr; } }
+
+        /* Panels */
+        .panel { background: white; border-radius: 16px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; }
+        .panel-title { font-size: 20px; font-weight: 800; color: #003366; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #e2e8f0; display: flex; align-items: center; gap: 10px; }
+
+        /* Form Inputs */
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-size: 14px; font-weight: 700; color: #334155; margin-bottom: 6px; }
+        input[type="text"], select, input[type="file"] { width: 100%; padding: 12px 15px; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 15px; outline: none; transition: 0.2s; background: #f8fafc; }
+        input[type="text"]:focus, select:focus { border-color: #004488; background: white; }
+
+        /* Upload Box */
+        .upload-box { border: 2px dashed #004488; background: #f0f7ff; border-radius: 12px; padding: 25px; text-align: center; cursor: pointer; transition: 0.2s; margin-bottom: 20px; }
+        .upload-box:hover { background: #e0f0ff; }
+        .upload-box p { font-weight: 700; color: #003366; font-size: 16px; }
+        .upload-box span { font-size: 13px; color: #64748b; display: block; margin-top: 5px; }
+
+        /* Media List */
+        .media-list { max-height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 5px; }
+        .media-item { display: flex; align-items: center; gap: 12px; background: #f8fafc; padding: 10px; border-radius: 10px; border: 1px solid #cbd5e1; }
+        .media-thumb { width: 65px; height: 65px; object-fit: cover; border-radius: 8px; background: #000; flex-shrink: 0; }
+        .media-info { flex-grow: 1; }
+        .media-info input { padding: 8px 10px; font-size: 13px; margin-top: 4px; }
+        .media-badge { font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; background: #003366; color: white; }
+        .media-actions { display: flex; flex-direction: column; gap: 4px; }
+        .btn-small { background: #e2e8f0; border: none; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; }
+        .btn-small:hover { background: #cbd5e1; }
+        .btn-del { background: #fee2e2; color: #dc2626; }
+        .btn-del:hover { background: #fecaca; }
+
+        /* Preview & Canvas Area */
+        .preview-wrapper { display: flex; flex-direction: column; align-items: center; }
+        canvas { width: 100%; max-width: 640px; aspect-ratio: 16/9; background: #0f172a; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
+        
+        .controls { display: flex; flex-wrap: wrap; gap: 12px; width: 100%; margin-top: 20px; justify-content: center; }
+        .btn { padding: 14px 24px; border: none; border-radius: 10px; font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-play { background: #004488; color: white; }
+        .btn-play:hover { background: #003366; }
+        .btn-export { background: #16a34a; color: white; }
+        .btn-export:hover { background: #15803d; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .status-bar { margin-top: 15px; font-size: 15px; font-weight: 700; color: #004488; text-align: center; min-height: 24px; }
+
+        footer { background: #002244; color: white; text-align: center; padding: 20px; font-size: 14px; margin-top: 40px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ATAVA Travel Memory Maker</h1>
+        <p>Turn your trip photos & video clips into a cinematic memory movie</p>
+    </header>
+
+    <div class="main-container">
+        <!-- Left Panel: Controls & Media -->
+        <div class="panel">
+            <div class="panel-title">1. Trip Details & Media</div>
+            
+            <div class="form-group">
+                <label>Trip Title (Appears at the start)</label>
+                <input type="text" id="tripTitle" value="OUR MEMORABLE TRIP 2026" placeholder="e.g., MUNNAR FAMILY TRIP">
+            </div>
+
+            <div class="form-group">
+                <label>Subtitle / Location</label>
+                <input type="text" id="tripSubtitle" value="Beautiful Moments Captured Together" placeholder="e.g., Kerala, India">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="form-group">
+                    <label>Animation Style</label>
+                    <select id="animStyle">
+                        <option value="zoom">Smooth Zoom (Ken Burns)</option>
+                        <option value="slide">Slide Transition</option>
+                        <option value="fade">Classic Fade</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Photo Duration</label>
+                    <select id="photoDuration">
+                        <option value="3">3 Seconds</option>
+                        <option value="4" selected>4 Seconds</option>
+                        <option value="5">5 Seconds</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Background Music (Optional MP3/Audio)</label>
+                <input type="file" id="audioInput" accept="audio/*">
+            </div>
+
+            <div class="upload-box" onclick="document.getElementById('mediaInput').click()">
+                <p>+ Click to Add Photos & Videos</p>
+                <span>Select multiple images (JPG, PNG) or video clips (MP4)</span>
+                <input type="file" id="mediaInput" multiple accept="image/*,video/*" style="display: none;">
+            </div>
+
+            <div class="media-list" id="mediaList">
+                <!-- Uploaded items appear here -->
+            </div>
+        </div>
+
+        <!-- Right Panel: Video Preview & Export -->
+        <div class="panel">
+            <div class="panel-title">2. Movie Preview & Download</div>
+            <div class="preview-wrapper">
+                <canvas id="movieCanvas" width="1280" height="720"></canvas>
+                
+                <div class="controls">
+                    <button class="btn btn-play" id="previewBtn" onclick="startPlayback(false)">▶ Preview Movie</button>
+                    <button class="btn btn-export" id="exportBtn" onclick="startPlayback(true)">⬇ Create & Download Video</button>
+                </div>
+                <div class="status-bar" id="statusBar">Add photos or videos to begin!</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Powered by ATAVA Digital Services & Trading
+    </footer>
+
+    <script>
+        const canvas = document.getElementById('movieCanvas');
+        const ctx = canvas.getContext('2d');
+        const mediaInput = document.getElementById('mediaInput');
+        const audioInput = document.getElementById('audioInput');
+        const mediaListEl = document.getElementById('mediaList');
+        const statusBar = document.getElementById('statusBar');
+
+        let mediaItems = []; // { id, type: 'image'|'video', url, element, caption, duration }
+        let bgAudioUrl = null;
+        let isPlaying = false;
+        let animationFrameId = null;
+
+        // Draw Initial Welcome Screen on Canvas
+        function drawIdleScreen() {
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 42px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('ATAVA TRAVEL MEMORY STUDIO', canvas.width / 2, canvas.height / 2 - 15);
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '24px Segoe UI';
+            ctx.fillText('Upload your trip photos & videos on the left', canvas.width / 2, canvas.height / 2 + 30);
+        }
+        drawIdleScreen();
+
+        // Handle Audio Selection
+        audioInput.addEventListener('change', (e) => {
+            if (e.target.files[0]) {
+                bgAudioUrl = URL.createObjectURL(e.target.files[0]);
+                statusBar.innerText = "Background music added: " + e.target.files[0].name;
+            }
+        });
+
+        // Handle Photo & Video Selection
+        mediaInput.addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            if (!files.length) return;
+
+            statusBar.innerText = "Loading media files...";
+
+            for (const file of files) {
+                const url = URL.createObjectURL(file);
+                const isVideo = file.type.startsWith('video/');
+                
+                if (isVideo) {
+                    const vid = document.createElement('video');
+                    vid.src = url;
+                    vid.muted = true;
+                    vid.playsInline = true;
+                    await new Promise(resolve => {
+                        vid.onloadedmetadata = () => resolve();
+                    });
+                    mediaItems.push({
+                        id: Date.now() + Math.random(),
+                        type: 'video',
+                        url: url,
+                        element: vid,
+                        caption: '',
+                        duration: Math.min(vid.duration, 15) // Cap clip preview at 15s for smooth rendering
+                    });
+                } else {
+                    const img = new Image();
+                    img.src = url;
+                    await new Promise(resolve => {
+                        img.onload = () => resolve();
+                    });
+                    mediaItems.push({
+                        id: Date.now() + Math.random(),
+                        type: 'image',
+                        url: url,
+                        element: img,
+                        caption: '',
+                        duration: parseInt(document.getElementById('photoDuration').value)
+                    });
+                }
+            }
+
+            renderMediaList();
+            statusBar.innerText = `${mediaItems.length} items ready! Click Preview or Download.`;
+            mediaInput.value = '';
+        });
+
+        // Render Media List UI
+        function renderMediaList() {
+            mediaListEl.innerHTML = '';
+            mediaItems.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'media-item';
+                
+                const thumb = item.type === 'image' 
+                    ? `<img src="${item.url}" class="media-thumb">`
+                    : `<video src="${item.url}" class="media-thumb"></video>`;
+
+                div.innerHTML = `
+                    ${thumb}
+                    <div class="media-info">
+                        <span class="media-badge">${index + 1}. ${item.type}</span>
+                        <input type="text" placeholder="Add memory caption (optional)..." value="${item.caption}" onchange="updateCaption(${index}, this.value)">
+                    </div>
+                    <div class="media-actions">
+                        <button class="btn-small" onclick="moveItem(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
+                        <button class="btn-small" onclick="moveItem(${index}, 1)" ${index === mediaItems.length - 1 ? 'disabled' : ''}>▼</button>
+                        <button class="btn-small btn-del" onclick="removeItem(${index})">✕</button>
+                    </div>
+                `;
+                mediaListEl.appendChild(div);
+            });
+        }
+
+        function updateCaption(index, text) {
+            mediaItems[index].caption = text;
+        }
+
+        function moveItem(index, dir) {
+            const newIndex = index + dir;
+            if (newIndex < 0 || newIndex >= mediaItems.length) return;
+            const temp = mediaItems[index];
+            mediaItems[index] = mediaItems[newIndex];
+            mediaItems[newIndex] = temp;
+            renderMediaList();
+        }
+
+        function removeItem(index) {
+            mediaItems.splice(index, 1);
+            renderMediaList();
+            if (mediaItems.length === 0) drawIdleScreen();
+        }
+
+        // Draw Image/Video Cover-Fit with Animation
+        function drawMediaFrame(item, progress, animStyle) {
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const el = item.element;
+            const elWidth = item.type === 'image' ? el.width : el.videoWidth;
+            const elHeight = item.type === 'image' ? el.height : el.videoHeight;
+
+            if (!elWidth || !elHeight) return;
+
+            // Calculate aspect fit (contain with blurred background)
+            ctx.save();
+            ctx.filter = 'blur(25px) brightness(0.4)';
+            const bgScale = Math.max(canvas.width / elWidth, canvas.height / elHeight);
+            const bgW = elWidth * bgScale;
+            const bgH = elHeight * bgScale;
+            ctx.drawImage(el, (canvas.width - bgW) / 2, (canvas.height - bgH) / 2, bgW, bgH);
+            ctx.restore();
+
+            // Foreground Sharp Media with Animation
+            ctx.save();
+            let scale = Math.min(canvas.width / elWidth, canvas.height / elHeight);
+            let offsetX = 0;
+            let alpha = 1;
+
+            if (item.type === 'image') {
+                if (animStyle === 'zoom') {
+                    scale *= (1 + progress * 0.12); // Smooth 12% zoom in
+                } else if (animStyle === 'slide') {
+                    if (progress < 0.15) offsetX = (1 - progress / 0.15) * 150;
+                } else if (animStyle === 'fade') {
+                    if (progress < 0.2) alpha = progress / 0.2;
+                    if (progress > 0.85) alpha = (1 - progress) / 0.15;
+                }
+            }
+
+            ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+            const drawW = elWidth * scale;
+            const drawH = elHeight * scale;
+            ctx.drawImage(el, (canvas.width - drawW) / 2 + offsetX, (canvas.height - drawH) / 2, drawW, drawH);
+            ctx.restore();
+
+            // Draw Caption Overlay if available
+            if (item.caption.trim() !== '') {
+                ctx.save();
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+                ctx.fillRect(0, canvas.height - 90, canvas.width, 90);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 30px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText(item.caption.toUpperCase(), canvas.width / 2, canvas.height - 35);
+                ctx.restore();
+            }
+        }
+
+        // Draw Intro Title Card
+        function drawTitleCard(progress) {
+            const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            grad.addColorStop(0, '#001a33');
+            grad.addColorStop(1, '#004080');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const alpha = progress < 0.25 ? progress / 0.25 : (progress > 0.8 ? (1 - progress) / 0.2 : 1);
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 54px Segoe UI';
+            ctx.textAlign = 'center';
+            const title = document.getElementById('tripTitle').value.toUpperCase() || 'OUR TRIP MEMORIES';
+            ctx.fillText(title, canvas.width / 2, canvas.height / 2 - 15);
+
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = '28px Segoe UI';
+            const sub = document.getElementById('tripSubtitle').value || '';
+            ctx.fillText(sub, canvas.width / 2, canvas.height / 2 + 40);
+            ctx.restore();
+        }
+
+        // Main Playback & Recording Engine
+        async function startPlayback(isRecording) {
+            if (mediaItems.length === 0) {
+                alert("Please add at least one photo or video first!");
+                return;
+            }
+            if (isPlaying) return;
+            isPlaying = true;
+
+            const previewBtn = document.getElementById('previewBtn');
+            const exportBtn = document.getElementById('exportBtn');
+            previewBtn.disabled = true;
+            exportBtn.disabled = true;
+
+            const photoDur = parseInt(document.getElementById('photoDuration').value);
+            const animStyle = document.getElementById('animStyle').value;
+            mediaItems.forEach(item => { if (item.type === 'image') item.duration = photoDur; });
+
+            // Setup Audio & Recorder if Exporting
+            let audioEl = null;
+            let mediaRecorder = null;
+            let recordedChunks = [];
+
+            if (bgAudioUrl) {
+                audioEl = new Audio(bgAudioUrl);
+                audioEl.loop = true;
+            }
+
+            if (isRecording) {
+                statusBar.innerText = "🎬 Recording your Travel Movie... Please wait until it finishes.";
+                const canvasStream = canvas.captureStream(30); // 30 FPS
+                
+                // Combine Audio if present
+                if (audioEl) {
+                    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const source = audioCtx.createMediaElementSource(audioEl);
+                    const dest = audioCtx.createMediaStreamDestination();
+                    source.connect(dest);
+                    source.connect(audioCtx.destination);
+                    const combinedStream = new MediaStream([...canvasStream.getVideoTracks(), ...dest.stream.getAudioTracks()]);
+                    mediaRecorder = new MediaRecorder(combinedStream, { mimeType: 'video/webm' });
+                } else {
+                    mediaRecorder = new MediaRecorder(canvasStream, { mimeType: 'video/webm' });
+                }
+
+                mediaRecorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) recordedChunks.push(e.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    const downloadUrl = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = (document.getElementById('tripTitle').value || 'Travel-Memory').replace(/\s+/g, '_') + '.webm';
+                    a.click();
+                    statusBar.innerText = "✅ Movie Downloaded Successfully!";
+                };
+
+                mediaRecorder.start();
+            } else {
+                statusBar.innerText = "▶ Playing Movie Preview...";
+            }
+
+            if (audioEl) audioEl.play();
+
+            // 1. Play Intro Title (3 seconds)
+            await runTimelineSegment(3, (progress) => drawTitleCard(progress));
+
+            // 2. Play Each Media Item Sequentially
+            for (let i = 0; i < mediaItems.length; i++) {
+                const item = mediaItems[i];
+                if (item.type === 'video') {
+                    item.element.currentTime = 0;
+                    item.element.play();
+                }
+                await runTimelineSegment(item.duration, (progress) => drawMediaFrame(item, progress, animStyle));
+                if (item.type === 'video') {
+                    item.element.pause();
+                }
+            }
+
+            // Finish
+            if (audioEl) {
+                audioEl.pause();
+                audioEl.currentTime = 0;
+            }
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+            } else {
+                statusBar.innerText = "Preview finished! Click 'Create & Download Video' to save.";
+            }
+
+            isPlaying = false;
+            previewBtn.disabled = false;
+            exportBtn.disabled = false;
+        }
+
+        function runTimelineSegment(durationSec, renderCallback) {
+            return new Promise((resolve) => {
+                const startTime = performance.now();
+                function step(now) {
+                    const elapsed = (now - startTime) / 1000;
+                    const progress = Math.min(elapsed / durationSec, 1);
+                    renderCallback(progress);
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        resolve();
+                    }
+                }
+                requestAnimationFrame(step);
+            });
+        }
+    </script>
+</body>
+</html>
